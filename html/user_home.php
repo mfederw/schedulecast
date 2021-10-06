@@ -144,7 +144,7 @@ if ($sql2 != "") {
 		echo "</td><td><font color='red'>$note</font></td></tr>\n";
 	}
 	if ($first == 0) {
-		echo "<tr><td></td><td></td><td><input type='submit' value='Update Availabilty'></td></tr>\n";
+		echo "<tr><td></td><td><font color=red><b>Submit Here</b></font></td><td bgcolor=red><input type='submit' value='Update Availabilty'></td></tr>\n";
 		echo "</form>\n";
 		echo "</table>\n";
 	}
