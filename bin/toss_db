@@ -1,0 +1,41 @@
+#/bin/bash
+me=`basename $0`
+schome=$HOME/schedule-cast
+
+USAGE="$me [ -u | -c | -r ] \
+  -c clean everything\
+  -r latest backup\
+  -u no users"
+
+if [ "$#" != "1" ] ; then
+	echo $USAGE
+	exit 1
+fi
+
+sudo -v
+sudo rm -rf ${schome}/db/*
+
+# Now that the database is cleaned out,
+# decide what we want next time we start up
+
+case $1 in
+   "-r")
+        backup=`ls -t ${schome}/backups/backup-* | head -1`
+	cp ${backup} ${schome}/init.db/backup.sql
+	;;
+   "-u")
+	# restore everything but user data
+	cp ${schome}/backups/cleandb.sql ${schome}/init.db/backup.sql
+	;;
+   "-c")
+	# Start from totally new
+	cp ${schome}/schedulecast.sql ${schome}/init.db/backup.sql
+	;;
+
+   *)
+	echo "Unknown Option"
+	echo $USAGE
+	exit 1
+	;;
+esac
+

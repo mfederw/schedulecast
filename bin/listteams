@@ -1,0 +1,3 @@
+#!/bin/bash
+
+docker exec -it schedule-cast_db_1 sh -c 'exec mysql -uroot -pyour_mysql_root_password schedulecast -e "select * from Teams "'

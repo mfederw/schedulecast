@@ -1,0 +1,26 @@
+#!/bin/bash
+
+TopDir=${HOME}/schedule-cast
+
+BackupFile=backup.sql
+MyDataBackupFile=schedulecast.sql
+dbbackupdir=${TopDir}/init.db
+
+ts=`date +%F`
+
+# Create a back up in the container (at host ${TopDir}/init.db/backup.sql)
+BackupCmd="mysqldump --all-databases -uroot -pyour_mysql_root_password > /docker-entrypoint-initdb.d/${BackupFile}"
+docker exec schedule-cast_db_1 sh -c  "${BackupCmd}"
+cp ${dbbackupdir}/backup.sql ${TopDir}/backups/backup-${ts}.sql
+
+# Create an Abreviated Backup
+BackupCmd="mysqldump schedulecast -uroot -pyour_mysql_root_password > /docker-entrypoint-initdb.d/$MyDataBackupFile"
+docker exec schedule-cast_db_1 sh -c  "${BackupCmd}"
+cp ${dbbackupdir}/${MyDataBackupFile} ${TopDir}/${MyDataBackupFile}
+rm -f ${dbbackupdir}/${MyDataBackupFile}
+
+# We now have a backup.sql (including Performer data) in the $dbbackupdir/$BackupFile (init.d/backup.sql)
+
+# make a "No User Data" database backup
+grep -v "INSERT INTO \`Performers\`" ${dbbackupdir}/backup.sql > ${TopDir}/backups/cleandb.sql
+
