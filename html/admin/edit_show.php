@@ -38,7 +38,13 @@ $query = mysqli_query($conn, $sql)
 $row = mysqli_fetch_array($query);
 	$conn->close();
 
-echo "<h1>Show: " . $row['Description'] . " " . $row['Date'] . "</h1>\n";
+
+$showdate = new DateTime($row['Date']);
+$datef =  $showdate->format("M j, Y g:i A");
+
+echo "<hr>\n";
+echo "<h1>Show: " . $row['Description'] . "</h1>";
+echo "<b><font size='+1'>" . $datef . "</font></b><br>\n<br>";
 
 echo "<form name='register' action='edit_show_rest.php' method='post'>\n";
 echo "  <input type='hidden' name='showid' value='" . $row['ID'] . "'>\n";

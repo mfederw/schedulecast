@@ -56,59 +56,61 @@ while ($showrow = mysqli_fetch_array($query)) {
 		array_push($cast, $castrow['Performer']);
 	}
 
-	  echo "<hr>\n";
-	  echo "<h2 id='show" . $showrow['ID'] . "'><b>" . $showrow['Description'] . "</b> ";
-	  echo "<b>" . $showrow['Date'] . "</b> ";
-	  echo "<b>" . $team[$showrow['Team']] . "</b></h2>\n";
+	$showdate = new DateTime($showrow['Date']);
+	$datef =  $showdate->format("M j, Y g:i A");
 
-	  $sql = "SELECT * FROM Availability WHERE ShowID = " . $showrow['ID'] . " AND Available = 1";
+	echo "<hr>\n";
+	echo "<h1><b>Casting: " . $showrow['Description'] . "</b></h1>";
+	echo "<b><font size='+1'>Date: " . $datef . "</font></b><br>";
+	echo "<b>Team: " . $team[$showrow['Team']] . "</b>\n";
 
-	  $query2 = mysqli_query($dbconnect, $sql)
+	$sql = "SELECT * FROM Availability WHERE ShowID = " . $showrow['ID'] . " AND Available = 1";
+
+	$query2 = mysqli_query($dbconnect, $sql)
 	    or die (mysqli_error($dbconnect));
 
 
-	  echo "<h3>Available Performers</h3>\n";
-	  echo "<table>\n";
-	  while ($availrow = mysqli_fetch_array($query2)) {
-	    echo "<tr>\n";
-	    echo "<td valign=top>" . $performer[$availrow['Performer']] . "</td>\n";
-	    echo "<td valign=top>\n";
+	echo "<h3>Available Performers</h3>\n";
+	echo "<table>\n";
+	while ($availrow = mysqli_fetch_array($query2)) {
+		echo "<tr>\n";
+		echo "<td valign=top>" . $performer[$availrow['Performer']] . "</td>\n";
+		echo "<td valign=top>\n";
 
-	    if ( in_array($availrow['Performer'], $cast) ) {
-	    	echo "";
-	    } else {
+		if ( in_array($availrow['Performer'], $cast) ) {
+			echo "";
+		} else {
+			echo "<form name='castchange' action='cast_show_rest.php' method='post'>\n";
+			echo "  <input type='hidden' name='showid' value='" . $showid . "'>";
+			echo "  <input type='hidden' name='performerid' value='" . $availrow['Performer'] . "'>";
+			echo "  <input type='hidden' name='todo' value='add'>";
+			echo "  <input type='submit' value='Cast'>\n";
+			echo "</form>\n";
+	    	}
+
+		echo "</td>\n";
+		echo "</tr>\n";
+	}
+	echo "</table>\n";
+
+	echo "<h3>Cast</h3>\n";
+	echo "<table>\n";
+	foreach ($cast as &$member) {
+		echo "<tr>\n";
+		echo "<td valign=top>" . $performer[$member] . "</td>\n";
+		echo "<td valign=top>\n";
 		echo "<form name='castchange' action='cast_show_rest.php' method='post'>\n";
 		echo "  <input type='hidden' name='showid' value='" . $showid . "'>";
-		echo "  <input type='hidden' name='performerid' value='" . $availrow['Performer'] . "'>";
-		echo "  <input type='hidden' name='todo' value='add'>";
-		echo "  <input type='submit' value='Cast'>\n";
+		echo "  <input type='hidden' name='performerid' value='" . $member . "'>";
+		echo "  <input type='hidden' name='todo' value='remove'>";
+		echo "  <input type='submit' value='Uncast'>\n";
 		echo "</form>\n";
-	    }
-
-	    echo "</td>\n";
-	    echo "</tr>\n";
-	  }
-	  echo "</table>\n";
-
-	  echo "<h3>Cast</h3>\n";
-	  echo "<table>\n";
-	  foreach ($cast as &$member) {
-	    echo "<tr>\n";
-	    echo "<td valign=top>" . $performer[$member] . "</td>\n";
-	    echo "<td valign=top>\n";
-	    echo "<form name='castchange' action='cast_show_rest.php' method='post'>\n";
-	    echo "  <input type='hidden' name='showid' value='" . $showid . "'>";
-	    echo "  <input type='hidden' name='performerid' value='" . $member . "'>";
-	    echo "  <input type='hidden' name='todo' value='remove'>";
-	    echo "  <input type='submit' value='Uncast'>\n";
-	    echo "</form>\n";
-	    echo "</td>\n";
-	    echo "</tr>\n";
-	  }
-	  echo "</table>\n";
-  }
+		echo "</td>\n";
+		echo "</tr>\n";
+	}
+	echo "</table>\n";
+}
 ?>
-
 
 </body>
 </html>
