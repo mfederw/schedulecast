@@ -41,8 +41,11 @@ $sql = "SELECT * FROM Casts WHERE Performer = " . $_SESSION['user_num'];
 $query = mysqli_query($conn, $sql)
    or die (mysqli_error($conn));
 
-$sql = "SELECT * FROM Shows WHERE Date > '" . date("Y-m-d H:i:s") . "' ORDER BY Date";
-$sql = "SELECT * FROM Shows";
+$date = date_create();
+$date->sub(new DateInterval('P1D'));
+$yesterdayformatted = date_format($date, "Y-m-d H:i:s");
+
+$sql = "SELECT * FROM Shows WHERE Date > '" . $yesterdayformatted . "' ORDER BY Date";
 
 $showquery = mysqli_query($conn, $sql)
    or die (mysqli_error($conn));
@@ -55,12 +58,14 @@ while ($showrow = mysqli_fetch_array($showquery)) {
    		or die (mysqli_error($conn));
 	while ($castrow = mysqli_fetch_array($query2)) {
 		if ($first == 1) {
-			echo "<h1>You are cast in the following shows</h1>";
+			echo "<h1>You are cast in the upcoming shows</h1>";
 			echo "<table cellpadding=5>\n";
 			echo "<tr><td align=center><b>Show</b></td><td align=center><b>Date</b></td><td align=center><b>Practice Zoom Link</b></td><td align=center><b>Show Zoom Link</b></td></tr>\n";
 			$first = 0;
 		}
-		echo "<tr><td align=center>" . $showrow['Description'] . "</td><td align=center>" . $showrow['Date'] . "</td>\n";
+		$showdate = new DateTime($showrow['Date']);
+		$datef =  $showdate->format("M j, Y g:i A");
+		echo "<tr><td align=center>" . $showrow['Description'] . "</td><td align=center>" . $datef . "</td>\n";
 		if ( $showrow['PracticeZoomLink'] != 'None' ) {
 			echo "<td align=center><a href='" . $showrow['PracticeZoomLink'] . "' target='_blank'>Practice</a></td>\n";
 		} else {
@@ -86,11 +91,17 @@ $query = mysqli_query($conn, $sql)
 $sql2 = "";
 while ($row = mysqli_fetch_array($query)) {
 	if ($sql2 == "") {
-		$sql2 = "SELECT * FROM Shows WHERE Date > '" . date("Y-m-d H:i:s") . "' AND Team = " . $row['Team'];
+		$sql2 = "SELECT * FROM Shows WHERE Date > '" . $yesterdayformatted . "' AND ( Team = " . $row['Team'];
 	} else {
 		$sql2 = $sql2 . " OR Team = " . $row['Team'];
 	}
 }
+
+if ($sql2 != "") {
+	$sql2 = $sql2 . ")";
+}
+
+//echo "\n" . $sql2 . "\n";
 
 if ($sql2 != "") {
 	$sql2 = $sql2 . " ORDER BY DATE";
@@ -119,15 +130,18 @@ if ($sql2 != "") {
 			} else {
 				$value = "Available";
 			}
-			$note = "";
+			$note = "<font size=-2>Submitted: " . $availrow['SubmitDate'] . "</font>";
 		} else {
 			$value = "Unavailable";
-			$note = "New";
+			$note = "<font color=red><b>New</b></font>";
 		}
 
 		$shownum = $showrow['ID'];
 
-		echo "<tr align=center><td align=center>" . $showrow['Description'] . "</td><td>" . $showrow['Date'] . "</td>\n<td>\n";
+		$showdate = new DateTime($showrow['Date']);
+		$datef =  $showdate->format("M j, Y g:i A");
+
+		echo "<tr align=center><td align=center>" . $showrow['Description'] . "</td><td>" . $datef . "</td>\n<td>\n";
 		echo "  <hidden name='shownum" . $shownum . "' value='" . $showrow['ID'] . "'>\n";
 		echo "  <select id='show" . $shownum . "' name='availability" . $shownum . "'>\n";
 		if ($value == "Unavailable") {
@@ -141,7 +155,7 @@ if ($sql2 != "") {
 			echo "    <option value=1>Available</option>\n";
 		}
 		echo "  </select>\n";
-		echo "</td><td><font color='red'>$note</font></td></tr>\n";
+		echo "</td><td>$note</td></tr>\n";
 	}
 	if ($first == 0) {
 		echo "<tr><td></td><td><font color=red><b>Submit Here</b></font></td><td bgcolor=red><input type='submit' value='Update Availabilty'></td></tr>\n";
@@ -152,7 +166,7 @@ if ($sql2 != "") {
 $conn->close();
 
 //$date = date_create();
-//$date->sub(new DateInterval('P2D'));
+//$date->sub(new DateInterval('P1D'));
 //echo date_format($date, "Y-m-d H:i:s") . "\n";
 
 ?>

@@ -28,7 +28,7 @@ foreach ($_REQUEST as $key => $value) {
 	  echo "<meta http-equiv=\"refresh\" content=\"15; user_home.php\"/>";
 	}
 
-	$sql = "INSERT INTO Availability VALUES (" . $_SESSION['user_num'] . ", " . $show . ", $value)";
+	$sql = "INSERT INTO Availability (Performer, ShowID, Available) VALUES (" . $_SESSION['user_num'] . ", " . $show . ", $value)";
 	//echo "SQL: " . $sql . "\n";
 	if ($conn->query($sql) != TRUE) {
 	  echo "Error: " . $sql . "<br>" . $conn->error;

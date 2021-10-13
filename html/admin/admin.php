@@ -47,7 +47,6 @@ $advanced = false;
 
 $startdate = date_create();
 $startdate->sub(new DateInterval('P1D'));
-//echo date_format($startdate, "Y-m-d H:i:s") . "\n";
 
 if ( $advanced == true ) {
 	$query = mysqli_query($dbconnect, "SELECT * FROM Shows ORDER BY Date")
@@ -66,6 +65,9 @@ echo "    <td align=center><b>Date</b></td>\n";
 echo "    <td align=center><b>Team</b></td>\n";
 echo "  <tr>\n";
 while ($showrow = mysqli_fetch_array($query)) {
+	$showdate = new DateTime($showrow['Date']);
+	$datef =  $showdate->format("M j, Y g:i A");
+
 	echo "  <tr>\n";
 	echo "    <td>\n";
 	echo "      <a href='cast_show.php?id=" . $showrow['ID'] . "'>Cast Show</a>\n";
@@ -74,7 +76,7 @@ while ($showrow = mysqli_fetch_array($query)) {
 	echo "      <a href='edit_show.php?id=" . $showrow['ID'] . "'>Edit Show Details</a>\n";
 	echo "    </td>\n";
 	echo "    <td align=center>" . $showrow['Description'] . "</td>\n";
-	echo "    <td align=center>" . $showrow['Date'] . "</td>\n";
+	echo "    <td align=center>" . $datef . "</td>\n";
 	echo "    <td align=center>" . $team[$showrow['Team']] . "</td>\n";
 	echo "    <td>\n";
 	echo "      <a href='show_delete_rest.php?id=" . $showrow['ID'] . "'>Delete</a>\n";

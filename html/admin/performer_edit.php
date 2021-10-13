@@ -121,6 +121,7 @@ if ($inteams) {
 	echo "</tr>\n</table>\n";
 }
 
+date_default_timezone_set('America/Los_Angeles');
 $startdate = date_create();
 $startdate->sub(new DateInterval('P1D'));
 
