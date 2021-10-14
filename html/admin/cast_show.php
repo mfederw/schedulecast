@@ -38,6 +38,7 @@ $perfquery = mysqli_query($dbconnect, "SELECT * FROM Performers")
 
 while ($perfrow = mysqli_fetch_array($perfquery)) {
         $performer[$perfrow['ID']] = $perfrow['NameFirst'] . " " . $perfrow['NameLast'];
+	$email[$perfrow['ID']] = $perfrow['Email'];
 }
 list($showid) = sscanf($_SERVER['QUERY_STRING'], "id=%d");
 
@@ -109,6 +110,34 @@ while ($showrow = mysqli_fetch_array($query)) {
 		echo "</tr>\n";
 	}
 	echo "</table>\n";
+
+	echo "<hr>\n";
+	echo "Sample Email<br>\n";
+	echo "<hr>\n";
+
+	echo "To: ";
+
+	$first = true;
+	foreach ($cast as &$member) {
+		if ( $first == true ) {
+			$first = false;
+		} else {
+			echo ", ";
+		}
+
+		echo $email[$member];
+	}
+	echo "\n<br><br>\n";
+	echo "You have been cast in an AIT show \"" . $showrow['Description'] . "\" on " . $datef . ".<br>\n";
+
+	$showdate->sub(new DateInterval('PT1H'));
+	$calltimeformatted = date_format($showdate, "Y-m-d H:i:s");
+
+	echo "<br>Call time on  " .  $showdate->format("M j") . " is at " . $showdate->format("g:i A");
+	echo "<br><br>Please plan to be on time.<br><br>\n";
+
+	echo "Zoom Link for the show is: " . $showrow['ShowZoomLink'];
+
 }
 ?>
 
