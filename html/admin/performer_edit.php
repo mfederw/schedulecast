@@ -145,6 +145,7 @@ while ($showrow = mysqli_fetch_array($showquery)) {
 			$available = "Not Available";
 		}
 		echo "  <td>" . $showrow['Description'] . "</td><td> " . $showrow['Date'] . "</td><td>" . $available . "<td>\n";
+		echo "  <td><font size='-2'>Submitted: " . $availrow['SubmitDate'] . "</font></td>\n";
 	}
 	echo "<tr>\n";
 }

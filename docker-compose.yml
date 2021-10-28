@@ -10,7 +10,6 @@ services:
       MYSQL_DATABASE: schedulecast
       PUID: 1000
       PGID: 1000
-      TZ: US/Pacific
     volumes:
       - /home/pi/schedule-cast/db:/var/lib/mysql
       - /home/pi/schedule-cast/init.db:/docker-entrypoint-initdb.d

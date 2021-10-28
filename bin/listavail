@@ -1,0 +1,14 @@
+#!/bin/bash
+
+me=`basename $0`
+tmpfile=/tmp/${me}_$$
+
+echo
+echo "Availability Submitted"
+docker exec -it schedule-cast_db_1 sh -c 'exec mysql -uroot -pyour_mysql_root_password schedulecast -Br -e "SELECT * FROM Availability ORDER BY SubmitDate "'
+echo
+echo "Performers"
+cmd="SELECT DISTINCT ID, NameFirst, NameLast FROM Performers WHERE (ID) IN (SELECT DISTINCT Performer FROM Availability)"
+docker exec -it schedule-cast_db_1 sh -c "exec mysql -uroot -pyour_mysql_root_password schedulecast -BNr -e \"$cmd\"" > $tmpfile
+sed "+s/	/ /g" $tmpfile
+rm $tmpfile
