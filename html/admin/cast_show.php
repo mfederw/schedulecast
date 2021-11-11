@@ -133,11 +133,23 @@ while ($showrow = mysqli_fetch_array($query)) {
 	$showdate->sub(new DateInterval('PT1H'));
 	$calltimeformatted = date_format($showdate, "Y-m-d H:i:s");
 
-	echo "<br>Call time on  " .  $showdate->format("M j") . " is at " . $showdate->format("g:i A");
-	echo "<br><br>Please plan to be on time.<br><br>\n";
-
-	echo "Zoom Link for the show is: " . $showrow['ShowZoomLink'];
-
+	echo "<br>";
+	echo "Practice Thursday at 7\n<br>\n";
+	if ( $showrow["PracticeZoomLink"] != "None" ) {
+		echo "&nbsp; &nbsp; &nbsp;";
+		echo "Link: " . $showrow['PracticeZoomLink'] . "\n<br>";
+	}
+	echo "<br>";
+        echo "Call time is " .  $showdate->format("M j") . " at " . $showdate->format("g:i A") . "\n<br>\n";
+	if ( $showrow["ShowZoomLink"] != "None" ) {
+		echo "&nbsp; &nbsp; &nbsp;";
+		echo "Link: " . $showrow['ShowZoomLink'] . "\n<br>";
+	}
+	echo "<br>";
+	echo "After Show Party <br>\n";
+	echo "&nbsp; &nbsp; &nbsp;";
+	echo "Link:\n";
+	echo "https://us02web.zoom.us/j/85823864683?pwd=a1NQTHRsVkRBUnpHaWQ0Z3FSNmV4QT09";
 }
 ?>
 
