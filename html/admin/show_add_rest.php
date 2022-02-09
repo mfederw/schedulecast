@@ -17,7 +17,10 @@ if ($conn->connect_error) {
   die("Database connection failed: " . $conn->connect_error);
 }
 
-$showdate = $_POST['year'] . "-" .  $_POST['month'] . "-" .  $_POST['day'] . " 20:00:00";
+$hour = $_POST['hour'];
+$minute = $_POST['minute'];
+
+$showdate = $_POST['year'] . "-" .  $_POST['month'] . "-" .  $_POST['day'] . " " . $hour . ":" . $minute . ":00";
 
 $sql = "INSERT INTO Shows (Date, Description, PracticeZoomlink, ShowZoomLink, Team) VALUES ('" . $showdate . "', '" . $_POST['Name'] . "', '" . $_POST['zoompractice'] . "', '" . $_POST['zoomshow'] . "', '" . $_POST['team'] . "')";
 

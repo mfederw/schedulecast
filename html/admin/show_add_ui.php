@@ -20,6 +20,8 @@ if ($dbconnect->connect_error) {
   die("Database connection failed: " . $dbconnect->connect_error);
 }
 
+$date = getdate();
+
 ?>
 
 <a href="admin.php">Cancel</a><br>
@@ -34,32 +36,59 @@ if ($dbconnect->connect_error) {
   <tr>
     <td>Show Date:</td><td><select id="years" name="year">
 <?php
-		for ($i = 2022; $i < 2025 ; $i++) {
+		for ($i = $date['year']; $i < $date['year'] + 3 ; $i++) {
 			echo "<option value='" . $i . "'>" . $i . "</option>";
 		}
 ?>
 		</select>
     <select id="months" name="month">
-		<option value='01'>Jan</option>
-		<option value='02'>Feb</option>
-		<option value='03'>Mar</option>
-		<option value='04'>Apr</option>
-		<option value='05'>May</option>
-		<option value='06'>Jun</option>
-		<option value='07'>Jul</option>
-		<option value='08'>Aug</option>
-		<option value='09'>Sep</option>
-		<option value='10'>Oct</option>
-		<option value='11'>Nov</option>
-		<option value='12'>Dec</option>
-		</select>
-		<select id="days" name="day">
 <?php
-		for ($i = 1; $i < 32 ; $i++) {
-			echo "<option value='" . $i . "'>" . $i . "</option>";
-		}
+$months = array("", "Janurary", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+
+for ($i = 1 ; $i < 13 ; $i++) {
+	if ($date['mon'] == $i) {
+		echo "<option selected=true value='". $i . "'>" . $date['month'] . "</option>";
+	} else {
+		echo "<option value='". $i . "'>" . $months[$i] . "</option>";
+	}
+}
+echo "</select>\n";
+echo "<select id='days' name='day'>\n";
+
+for ($i = 1; $i < 32 ; $i++) {
+	if ( $date['mday'] == $i) {
+		echo "<option selected=true value='" . $i . "'>" . $i . "</option>";
+	} else {
+		echo "<option value='" . $i . "'>" . $i . "</option>";
+	}
+}
+echo "</select>\n";
+echo "</td>\n";
+echo "<td><tr>\n";
+echo "<td>Hour (Military Time):</td>\n";
+echo "<td>\n";
+echo "<select id='hours' name='hour'>\n";
+for ($i = 0; $i < 25 ; $i++) {
+	if ( $i == 20 ) {
+		echo "<option selected=true value='" . $i . "'>" . $i . "</option>";
+	} else {
+		echo "<option value='" . $i . "'>" . $i . "</option>";
+	}
+}
+echo "</select>\n";
+echo ":";
+
+echo "<select id='minutes' name='minute'>\n";
+for ($i = 0; $i < 60 ; $i += 15) {
+	printf("<option value=%d>%02d</option>\n", $i, $i);
+}
+echo "</select>\n";
+
+echo "</td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
 ?>
-		</select></td>
+    </td>
   </tr>
   <tr>
     <td>Practice Zoom Link:</td><td><input type='text' size=90 name='zoompractice' value='None'></td>
