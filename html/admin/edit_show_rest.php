@@ -21,7 +21,8 @@ $sql = "UPDATE Shows SET ";
 $sql = $sql . "Date = '" . $_POST['date'] . "', ";
 $sql = $sql . "Description  = '" . $_POST['description'] . "', ";
 $sql = $sql . "PracticeZoomLink  = '" . $_POST['practicezoomlink'] . "', ";
-$sql = $sql . "ShowZoomLink  = '" . $_POST['showzoomlink'] . "' ";
+$sql = $sql . "ShowZoomLink  = '" . $_POST['showzoomlink'] . "', ";
+$sql = $sql . "Team  = '" . $_POST['team'] . "' ";
 
 $sql = $sql . " WHERE ID = " .  $_POST['showid'];
 

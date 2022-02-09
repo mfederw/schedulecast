@@ -34,7 +34,7 @@ if ($dbconnect->connect_error) {
   <tr>
     <td>Show Date:</td><td><select id="years" name="year">
 <?php
-		for ($i = 2021; $i < 2025 ; $i++) {
+		for ($i = 2022; $i < 2025 ; $i++) {
 			echo "<option value='" . $i . "'>" . $i . "</option>";
 		}
 ?>

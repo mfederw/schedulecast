@@ -1,5 +1,15 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
+<head>
+<style>
+th, td {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+</style>
+</head>
 <body>
 <?php
 session_start();
@@ -92,14 +102,39 @@ echo "<h1>Teams</h1>\n";
 $query = mysqli_query($dbconnect, "SELECT * FROM Teams ORDER BY Name")
   or die (mysqli_error($dbconnect));
 
+echo "<table width=50%>\n";
+echo "<tr><th>Team</th><th>Team Email Addresses</th></tr>\n";
 while ($teamrow = mysqli_fetch_array($query)) {
-	echo $teamrow['Name'] . "\n<br>\n";
+	echo "<tr>\n";
+
+	echo "<td align=center valign=top width=30%><a href='team_info.php?id=" . $teamrow['ID'] . "'>" . $teamrow['Name'] .  "</a></td>\n";
+	$perfquery = mysqli_query($dbconnect, "SELECT * FROM TeamMembership WHERE Team = " . $teamrow['ID'])
+  	  or die (mysqli_error($dbconnect));
+
+	echo "<td>\n";
+	$first = true;
+	while ($perfrow = mysqli_fetch_array($perfquery)) {
+		$emailquery = mysqli_query($dbconnect, "SELECT * FROM Performers WHERE ID = " . $perfrow['Performer'])
+  	  	  or die (mysqli_error($dbconnect));
+
+		while ($emailrow = mysqli_fetch_array($emailquery)) {
+			if ($first == true) {
+				$first = false;
+			} else {
+				echo ", ";
+			}
+			echo $emailrow['Email'];
+		}
+	}
+	echo "</td>\n";
+	echo "</tr>\n";
 }
+echo "</table>\n";
 
 echo "<br>\n";
 echo "<form name='newteam' action='new_team_rest.php' method='post'>\n";
 echo "    <input type='text' name='name' size=30>\n";
-echo "    <input type='submit' value='Add Team'>\n";
+echo "    <input type='submit' value='Create New Team'>\n";
 echo "</form>\n";
 
 $dbconnect->close();

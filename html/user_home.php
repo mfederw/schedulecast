@@ -11,9 +11,7 @@ if ( isset( $_SESSION['user_id'] ) ) {
 ?>
 
 <html>
-
 <?php
-
 echo "<table width='50%'><tr>";
 echo "<td>User: " . $_SESSION['user_id'] . "</td>\n";
 if ( $_SESSION['admin'] == 1 ) {
@@ -33,6 +31,15 @@ $conn=mysqli_connect($hostname,$username,$password,$db);
 
 if ($conn->connect_error) {
   die("Database connection failed: " . $conn->connect_error);
+}
+
+// Populate the Team Names
+$teamquery = mysqli_query($conn, "SELECT * FROM Teams")
+   or die (mysqli_error($conn));
+
+while ($teamrow = mysqli_fetch_array($teamquery)) {
+        $team[$teamrow['ID']] = $teamrow['Name'];
+        $ismember[$teamrow['ID']] = false;
 }
 
 $sql = "SELECT * FROM Casts WHERE Performer = " . $_SESSION['user_num'];
@@ -60,12 +67,12 @@ while ($showrow = mysqli_fetch_array($showquery)) {
 		if ($first == 1) {
 			echo "<h1>You are cast in the upcoming shows</h1>";
 			echo "<table cellpadding=5>\n";
-			echo "<tr><td align=center><b>Show</b></td><td align=center><b>Date</b></td><td align=center><b>Practice Zoom Link</b></td><td align=center><b>Show Zoom Link</b></td></tr>\n";
+			echo "<tr><td align=center><b>Show</b></td><td align=center><b>Date</b></td><td align=center><b>Team</td><td align=center><b>Practice Zoom Link</b></td><td align=center><b>Show Zoom Link</b></td></tr>\n";
 			$first = 0;
 		}
 		$showdate = new DateTime($showrow['Date']);
 		$datef =  $showdate->format("M j, Y g:i A");
-		echo "<tr><td align=center>" . $showrow['Description'] . "</td><td align=center>" . $datef . "</td>\n";
+		echo "<tr><td align=center>" . $showrow['Description'] . "</td><td align=center>" . $datef . "</td><td align=center>" . $team[$showrow['Team']] . "</td>\n";
 		if ( $showrow['PracticeZoomLink'] != 'None' ) {
 			echo "<td align=center><a href='" . $showrow['PracticeZoomLink'] . "' target='_blank'>Practice</a></td>\n";
 		} else {
@@ -112,7 +119,7 @@ if ($sql2 != "") {
 		if ($first == 1) {
 			echo "<h1>Verify availability for the following shows</h1>\n";
 			echo "<table border = 0 cellpadding=7>\n";
-			echo "<tr align=center><td><b>Show</b></td><td><b>Date</b></td><td><b>Availability</b></td><td></td></tr>\n";
+			echo "<tr align=center><td><b>Show</b></td><td><b>Date</b></td><td><b>Team</b></td><td><b>Availability</b></td><td></td></tr>\n";
 			echo "<form name='available' action='set_available_rest.php' method='post'>\n";
 			$first = 0;
 		}
@@ -141,7 +148,9 @@ if ($sql2 != "") {
 		$showdate = new DateTime($showrow['Date']);
 		$datef =  $showdate->format("M j, Y g:i A");
 
-		echo "<tr align=center><td align=center>" . $showrow['Description'] . "</td><td>" . $datef . "</td>\n<td>\n";
+		echo "<tr align=center><td align=center>" . $showrow['Description'] . "</td><td>" . $datef . "</td>";
+		echo "<td>" . $team[$showrow['Team']] . "</td>\n";
+		echo "<td>";
 		echo "  <hidden name='shownum" . $shownum . "' value='" . $showrow['ID'] . "'>\n";
 		echo "  <select id='show" . $shownum . "' name='availability" . $shownum . "'>\n";
 		if ($value == "Unavailable") {
@@ -158,10 +167,12 @@ if ($sql2 != "") {
 		echo "</td><td>$note</td></tr>\n";
 	}
 	if ($first == 0) {
-		echo "<tr><td></td><td><font color=red><b>Submit Here</b></font></td><td bgcolor=red><input type='submit' value='Update Availabilty'></td></tr>\n";
+		echo "<tr><td></td><td><font color=red><b>Submit Here -></b></font></td><td bgcolor=red><input type='submit' value='Update Availabilty'></td></tr>\n";
 		echo "</form>\n";
 		echo "</table>\n";
 	}
+} else {
+	echo "You, " . $_SESSION['user_id'] . ", are not currently on an improv team. You will see more here when you have been placed on a team and that team has a scheduled show.";
 }
 $conn->close();
 

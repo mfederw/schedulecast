@@ -36,8 +36,6 @@ $query = mysqli_query($conn, $sql)
    or die (mysqli_error($conn));
 
 $row = mysqli_fetch_array($query);
-	$conn->close();
-
 
 $showdate = new DateTime($row['Date']);
 $datef =  $showdate->format("M j, Y g:i A");
@@ -64,6 +62,29 @@ echo "  </tr>\n";
 echo "  <tr>\n";
 echo "    <td>Show Zoom Link:</td>";
 echo "    <td><input type='text' name='showzoomlink' size=90 value='" . $row['ShowZoomLink'] . "'></td>\n";
+echo "  </tr>\n";
+echo "  <tr>\n";
+echo "    <td>Team:</td>";
+echo "    <td><select id='team' name='team'>";
+
+$teamquery = mysqli_query($conn, "SELECT * FROM Teams")
+   or die (mysqli_error($conn));
+
+while ($teamrow = mysqli_fetch_array($teamquery)) {
+  if ($teamrow['ID'] == $row['Team']) {
+    echo "<option selected=true value='" . $teamrow['ID'] . "'>". $teamrow['Name'] . "</option>\n";
+  } else {
+    echo "<option value='" . $teamrow['ID'] . "'>". $teamrow['Name'] . "</option>\n";
+  }
+}
+
+$conn->close();
+
+echo "    </select></td>";
+echo "  </tr>\n";
+echo "  <tr>\n";
+echo "    <td></td>\n";
+echo "    <td></td>\n";
 echo "  </tr>\n";
 echo "  <tr>\n";
 echo "    <td></td>\n";
